@@ -1,0 +1,8 @@
+{
+  "name": "aruskas-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:smoke": "node --experimental-sqlite tests/smoke-test.mjs"
+  }
+}

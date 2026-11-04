@@ -1,0 +1,27 @@
+name = "aruskas-api"
+main = "index.js"
+compatibility_date = "2026-11-01"
+workers_dev = true
+
+# Isi database_id dengan ID D1 yang dibuat di akun Cloudflare kamu.
+[[d1_databases]]
+binding = "DB"
+database_name = "aruskas-db"
+database_id = "GANTI_DENGAN_ID_D1_MILIKMU"
+
+# R2 bucket dibuat melalui Cloudflare Dashboard atau wrangler r2 bucket create.
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "aruskas-files"
+
+[triggers]
+crons = ["0 13 * * *"]
+
+[vars]
+ALLOWED_ORIGINS = "https://USERNAME.github.io,http://127.0.0.1:5500"
+APP_NAME = "ARUSKAS"
+
+# Telegram token dan webhook secret WAJIB disimpan sebagai Worker Secrets:
+# wrangler secret put AUTH_PEPPER
+# wrangler secret put TELEGRAM_BOT_TOKEN
+# wrangler secret put TELEGRAM_WEBHOOK_SECRET

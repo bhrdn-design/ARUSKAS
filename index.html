@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102a43">
+  <meta name="description" content="ARUSKAS — pencatatan keuangan pribadi yang rapi, aman, dan tersinkronisasi.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+  <title>ARUSKAS — Personal Finance</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+  <script src="assets/js/config.js"></script>
+  <script type="module" src="assets/js/app.js"></script>
+</head>
+<body>
+  <div id="toast-region" class="toast-region" aria-live="polite"></div>
+
+  <main id="auth-screen" class="auth-screen hidden">
+    <section class="auth-visual">
+      <div class="auth-brand"><span class="brand-mark"><i data-lucide="wallet"></i></span><span>ARUSKAS</span></div>
+      <div class="auth-visual-content">
+        <span class="eyebrow light">PERSONAL FINANCE, MADE CLEAR</span>
+        <h1>Uangmu punya arah.<br><em>Catat dengan tenang.</em></h1>
+        <p>Satu tempat untuk mencatat pemasukan, mengontrol pengeluaran, dan memahami kondisi keuanganmu.</p>
+        <div class="auth-visual-stats">
+          <div><strong>01</strong><span>Catat transaksi</span></div>
+          <div><strong>02</strong><span>Pantau saldo</span></div>
+          <div><strong>03</strong><span>Ambil keputusan</span></div>
+        </div>
+      </div>
+      <div class="auth-visual-footer">© 2026 ARUSKAS · Financial clarity, every day.</div>
+    </section>
+    <section class="auth-panel">
+      <div class="auth-panel-inner">
+        <div class="auth-mobile-brand"><span class="brand-mark"><i data-lucide="wallet"></i></span><b>ARUSKAS</b></div>
+        <div id="login-panel" class="auth-form-panel">
+          <span class="eyebrow">SELAMAT DATANG KEMBALI</span>
+          <h2>Masuk ke akunmu</h2>
+          <p class="muted">Lanjutkan mengelola keuangan dengan lebih terarah.</p>
+          <form id="login-form" class="form-stack">
+            <label>Username<input name="username" autocomplete="username" placeholder="Masukkan username" required maxlength="24"></label>
+            <label>Password<div class="password-field"><input name="password" type="password" autocomplete="current-password" placeholder="Masukkan password" required><button type="button" class="icon-button password-toggle" aria-label="Tampilkan password"><i data-lucide="eye"></i></button></div></label>
+            <div class="form-row between"><label class="check-label"><input type="checkbox" name="remember" checked> Tetap masuk di perangkat ini</label><button type="button" class="text-button" data-auth-view="recover">Lupa password?</button></div>
+            <button class="btn btn-primary btn-block" type="submit">Masuk <i data-lucide="arrow-right"></i></button>
+          </form>
+          <p class="auth-switch">Belum punya akun? <button type="button" class="text-button" data-auth-view="register">Buat akun</button></p>
+        </div>
+        <div id="register-panel" class="auth-form-panel hidden">
+          <span class="eyebrow">MULAI DARI SEKARANG</span><h2>Buat akun ARUSKAS</h2><p class="muted">Akun pribadi untuk menyimpan catatan keuanganmu.</p>
+          <form id="register-form" class="form-stack">
+            <label>Nama lengkap<input name="full_name" autocomplete="name" placeholder="Nama lengkap" required maxlength="80"></label>
+            <label>Username<input name="username" autocomplete="username" placeholder="3–24 huruf, angka, atau _" required minlength="3" maxlength="24"></label>
+            <label>Password<div class="password-field"><input name="password" type="password" autocomplete="new-password" placeholder="Minimal 10 karakter" required minlength="10"><button type="button" class="icon-button password-toggle" aria-label="Tampilkan password"><i data-lucide="eye"></i></button></div></label>
+            <label>Konfirmasi password<input name="confirm_password" type="password" autocomplete="new-password" placeholder="Ulangi password" required minlength="10"></label>
+            <button class="btn btn-primary btn-block" type="submit">Buat akun <i data-lucide="arrow-right"></i></button>
+          </form>
+          <p class="auth-switch">Sudah punya akun? <button type="button" class="text-button" data-auth-view="login">Masuk</button></p>
+        </div>
+        <div id="recover-panel" class="auth-form-panel hidden">
+          <span class="eyebrow">PEMULIHAN AKUN</span><h2>Atur ulang password</h2><p class="muted">Gunakan salah satu recovery code yang diberikan saat pendaftaran.</p>
+          <form id="recover-form" class="form-stack">
+            <label>Username<input name="username" required maxlength="24"></label>
+            <label>Recovery code<input name="recovery_code" placeholder="ARS-XXXXXXXX" required maxlength="32"></label>
+            <label>Password baru<input name="new_password" type="password" required minlength="10"></label>
+            <button class="btn btn-primary btn-block" type="submit">Atur ulang password</button>
+          </form>
+          <p class="auth-switch"><button type="button" class="text-button" data-auth-view="login">Kembali ke login</button></p>
+        </div>
+        <div class="auth-security-note"><i data-lucide="shield-check"></i><span>Data akun dan transaksi disimpan di backend pribadi, bukan di browser.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-shell" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <a class="sidebar-brand" href="#dashboard"><span class="brand-mark"><i data-lucide="wallet"></i></span><span><b>ARUSKAS</b><small>FINANCIAL SPACE</small></span></a>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Navigasi utama">
+        <button class="nav-item active" data-view="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
+        <div class="nav-divider"></div>
+        <span class="nav-section-label">TRANSAKSI</span>
+        <button class="nav-item" data-view="income"><i data-lucide="trending-up"></i><span>Pemasukan</span></button>
+        <button class="nav-item" data-view="expense"><i data-lucide="trending-down"></i><span>Pengeluaran</span></button>
+        <button class="nav-item" data-view="history"><i data-lucide="receipt-text"></i><span>Riwayat transaksi</span></button>
+        <span class="nav-section-label">ANALISIS</span>
+        <button class="nav-item" data-view="reports"><i data-lucide="chart-line"></i><span>Laporan</span></button>
+        <span class="nav-section-label">PENGELOLAAN</span>
+        <button class="nav-item" data-view="accounts"><i data-lucide="landmark"></i><span>Akun keuangan</span></button>
+        <button class="nav-item" data-view="categories"><i data-lucide="tags"></i><span>Kategori</span></button>
+        <button class="nav-item" data-view="telegram"><i data-lucide="send"></i><span>Integrasi Telegram</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-tip"><span class="tip-icon"><i data-lucide="sparkles"></i></span><b>Small steps, better money.</b><p>Catat hari ini untuk keputusan yang lebih baik esok.</p></div>
+        <button class="nav-item" data-view="settings"><i data-lucide="settings-2"></i><span>Pengaturan</span></button>
+        <button class="nav-item" data-view="profile"><i data-lucide="user-round"></i><span>Profil saya</span></button>
+      </div>
+    </aside>
+
+    <div class="main-column">
+      <header class="topbar">
+        <div class="topbar-left"><button class="icon-button mobile-menu" id="mobile-menu" aria-label="Buka menu"><i data-lucide="menu"></i></button><div><div class="breadcrumb">Workspace <i data-lucide="chevron-right"></i> <b id="page-breadcrumb">Dashboard</b></div><div class="topbar-date" id="today-label"></div></div></div>
+        <div class="topbar-actions"><button class="btn btn-soft install-app-button hidden" id="install-app"><i data-lucide="download"></i><span>Install</span></button><button class="icon-button" id="theme-toggle" aria-label="Ubah tema"><i data-lucide="moon"></i></button><button class="topbar-add" id="quick-add"><i data-lucide="plus"></i><span>Tambah transaksi</span></button><button class="profile-chip" id="profile-shortcut"><span class="avatar" id="top-avatar">A</span><span><b id="top-name">Pengguna</b><small id="top-username">@username</small></span><i data-lucide="chevron-down"></i></button></div>
+      </header>
+      <main class="page-content" id="page-content">
+        <section class="view active" id="view-dashboard">
+          <div class="page-heading"><div><span class="eyebrow">OVERVIEW</span><h1>Ringkasan keuangan</h1><p>Pantau arus uangmu dan lihat gambaran keuangan secara menyeluruh.</p></div><div class="heading-actions"><select id="dashboard-period" class="select-control"><option value="month">Bulan ini</option><option value="today">Hari ini</option><option value="yesterday">Kemarin</option><option value="week">Minggu ini</option><option value="lastmonth">Bulan lalu</option><option value="year">Tahun ini</option><option value="all">Semua waktu</option><option value="custom">Rentang khusus</option></select></div></div><div class="dashboard-custom-range hidden" id="dashboard-custom-range"><label>Dari tanggal<input type="date" id="dashboard-custom-start" class="input-control"></label><label>Sampai tanggal<input type="date" id="dashboard-custom-end" class="input-control"></label><button class="btn btn-primary" id="dashboard-apply-custom"><i data-lucide="filter"></i> Terapkan periode</button></div>
+          <div class="balance-hero"><div class="balance-copy"><span> TOTAL SALDO SAAT INI <i data-lucide="eye"></i></span><div class="balance-value" id="dashboard-balance">Rp0</div><small>Saldo seluruh akun keuangan</small><div class="balance-today"><i data-lucide="calendar-check"></i><span>Transaksi hari ini</span><b id="dashboard-today-count">0</b></div></div><div class="balance-decoration"><span class="decor-orbit orbit-one"></span><span class="decor-orbit orbit-two"></span><i data-lucide="wallet"></i></div><button class="balance-action" data-view="accounts">Kelola akun <i data-lucide="arrow-up-right"></i></button></div>
+          <div class="stat-grid"><article class="stat-card"><div class="stat-top"><span class="stat-icon income-icon"><i data-lucide="arrow-down-left"></i></span><span class="stat-label">PEMASUKAN</span></div><strong id="dashboard-income">Rp0</strong><small>Periode terpilih</small></article><article class="stat-card"><div class="stat-top"><span class="stat-icon expense-icon"><i data-lucide="arrow-up-right"></i></span><span class="stat-label">PENGELUARAN</span></div><strong id="dashboard-expense">Rp0</strong><small>Periode terpilih</small></article><article class="stat-card"><div class="stat-top"><span class="stat-icon net-icon"><i data-lucide="scale"></i></span><span class="stat-label">SELISIH</span></div><strong id="dashboard-net">Rp0</strong><small>Pemasukan dikurangi pengeluaran</small></article><article class="stat-card"><div class="stat-top"><span class="stat-icon count-icon"><i data-lucide="list"></i></span><span class="stat-label">TRANSAKSI</span></div><strong id="dashboard-count">0</strong><small>Jumlah transaksi periode ini</small></article></div>
+          <div class="dashboard-grid"><article class="panel chart-panel"><div class="panel-heading"><div><h3>Arus kas</h3><p>Perbandingan pemasukan dan pengeluaran</p></div><span class="panel-badge"><i data-lucide="chart-line"></i> 6 bulan</span></div><div class="chart-wrap"><canvas id="cashflow-chart" aria-label="Grafik arus kas"></canvas></div></article><article class="panel"><div class="panel-heading"><div><h3>Pengeluaran per kategori</h3><p>Komposisi pengeluaran</p></div><button class="more-link" data-view="reports">Detail <i data-lucide="arrow-up-right"></i></button></div><div class="donut-wrap"><canvas id="category-chart" aria-label="Grafik kategori pengeluaran"></canvas><div class="donut-center"><b id="category-total">Rp0</b><small>Total</small></div></div><div id="category-legend" class="category-legend"></div></article></div>
+          <article class="panel recent-panel"><div class="panel-heading"><div><h3>Transaksi terbaru</h3><p>Aktivitas keuangan terakhir</p></div><button class="more-link" data-view="history">Lihat semua <i data-lucide="arrow-right"></i></button></div><div id="recent-transactions" class="recent-list"><div class="skeleton-row"></div><div class="skeleton-row"></div><div class="skeleton-row"></div></div></article>
+        </section>
+
+        <section class="view" id="view-income"><div class="page-heading"><div><span class="eyebrow">CASH IN</span><h1>Catat pemasukan</h1><p>Tambahkan uang yang masuk ke akun keuanganmu.</p></div></div><div id="income-form-mount"></div></section>
+        <section class="view" id="view-expense"><div class="page-heading"><div><span class="eyebrow">CASH OUT</span><h1>Catat pengeluaran</h1><p>Catat pengeluaran agar setiap rupiah punya jejak.</p></div></div><div id="expense-form-mount"></div></section>
+
+        <section class="view" id="view-history"><div class="page-heading"><div><span class="eyebrow">TRANSACTION LOG</span><h1>Riwayat transaksi</h1><p>Temukan, periksa, dan kelola seluruh transaksi keuanganmu.</p></div><button class="btn btn-primary" id="history-add"><i data-lucide="plus"></i> Transaksi baru</button></div><div class="panel filter-panel"><div class="filter-row"><div class="search-box"><i data-lucide="search"></i><input id="history-search" placeholder="Cari keterangan atau nomor transaksi..."></div><select id="history-kind" class="select-control"><option value="">Semua jenis</option><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option></select><select id="history-account" class="select-control"><option value="">Semua akun</option></select><select id="history-category" class="select-control"><option value="">Semua kategori</option></select><select id="history-sort" class="select-control"><option value="newest">Terbaru</option><option value="oldest">Terlama</option></select><input type="date" id="history-start" class="input-control"><input type="date" id="history-end" class="input-control"><button class="btn btn-soft" id="history-filter">Filter</button></div></div><div class="panel table-panel"><div class="table-meta"><span id="history-count">Memuat transaksi...</span><button class="text-button" id="history-reset">Reset filter</button></div><div id="history-table-wrap" class="table-responsive"></div><div class="pagination" id="history-pagination"></div></div></section>
+
+        <section class="view" id="view-reports"><div class="page-heading"><div><span class="eyebrow">FINANCIAL INSIGHT</span><h1>Laporan keuangan</h1><p>Pahami pola pemasukan dan pengeluaran dalam periode pilihanmu.</p></div><button class="btn btn-soft" id="backup-export"><i data-lucide="database"></i> Backup data</button></div><div class="panel report-filter"><div class="report-date-fields"><label>Dari tanggal<input type="date" id="report-start" class="input-control"></label><label>Sampai tanggal<input type="date" id="report-end" class="input-control"></label><label>Jenis transaksi<select id="report-kind" class="select-control"><option value="">Semua jenis</option><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option></select></label><label>Kategori<select id="report-category" class="select-control"><option value="">Semua kategori</option></select></label><label>Akun<select id="report-account" class="select-control"><option value="">Semua akun</option></select></label><button class="btn btn-primary" id="report-apply"><i data-lucide="filter"></i> Tampilkan</button></div><div class="export-actions"><button class="btn btn-soft" id="export-csv"><i data-lucide="file-spreadsheet"></i> CSV</button><button class="btn btn-soft" id="export-xlsx"><i data-lucide="file-spreadsheet"></i> Excel</button><button class="btn btn-soft" id="export-pdf"><i data-lucide="download"></i> PDF</button><label class="btn btn-soft file-button"><i data-lucide="upload"></i> Impor backup<input type="file" id="backup-import-file" accept="application/json,.json" hidden></label></div></div><div id="report-results"><div class="empty-state"><span class="empty-icon"><i data-lucide="chart-line"></i></span><h3>Pilih periode laporan</h3><p>Atur rentang tanggal, lalu tekan Tampilkan.</p></div></div></section>
+
+        <section class="view" id="view-accounts"><div class="page-heading"><div><span class="eyebrow">MONEY SOURCES</span><h1>Akun keuangan</h1><p>Kelola uang tunai, rekening bank, e-wallet, dan sumber dana lainnya.</p></div><button class="btn btn-primary" id="add-account"><i data-lucide="plus"></i> Tambah akun</button></div><div id="accounts-grid" class="accounts-grid"></div></section>
+        <section class="view" id="view-categories"><div class="page-heading"><div><span class="eyebrow">TRANSACTION LABELS</span><h1>Kategori transaksi</h1><p>Atur kategori agar laporan keuangan lebih mudah dibaca.</p></div><button class="btn btn-primary" id="add-category"><i data-lucide="plus"></i> Tambah kategori</button></div><div class="category-management-grid"><article class="panel"><div class="panel-heading"><div><h3><span class="dot dot-income"></span> Pemasukan</h3><p>Kategori uang masuk</p></div></div><div id="income-categories" class="managed-list"></div></article><article class="panel"><div class="panel-heading"><div><h3><span class="dot dot-expense"></span> Pengeluaran</h3><p>Kategori uang keluar</p></div></div><div id="expense-categories" class="managed-list"></div></article></div></section>
+
+        <section class="view" id="view-telegram"><div class="page-heading"><div><span class="eyebrow">CONNECTED WORKFLOW</span><h1>Integrasi Telegram</h1><p>Catat transaksi dan periksa laporan langsung dari Telegram.</p></div></div><div class="telegram-layout"><article class="telegram-hero"><div class="telegram-illustration"><span class="telegram-orbit"><i data-lucide="send"></i></span><span class="telegram-dot dot-a"></span><span class="telegram-dot dot-b"></span></div><span class="eyebrow light">ARUSKAS ON TELEGRAM</span><h2>Keuangan dalam genggaman.</h2><p>Hubungkan akun ARUSKAS dengan bot Telegram untuk mencatat transaksi tanpa membuka website.</p><div class="telegram-status" id="telegram-status"><span class="status-dot"></span> Memeriksa status...</div></article><article class="panel telegram-connect-panel"><div class="panel-heading"><div><h3>Hubungkan akun</h3><p>Pairing aman dengan kode sekali pakai.</p></div><span class="secure-chip"><i data-lucide="shield-check"></i> Secure pairing</span></div><ol class="steps-list"><li><span>1</span><div><b>Buka bot ARUSKAS</b><small>Mulai chat dengan bot Telegram yang sudah dibuat.</small></div></li><li><span>2</span><div><b>Buat kode pairing</b><small>Klik tombol di bawah. Kode hanya berlaku 5 menit.</small></div></li><li><span>3</span><div><b>Kirim kode ke bot</b><small>Ketik /hubungkan diikuti kode yang muncul.</small></div></li></ol><div id="pair-code-area"></div><button class="btn btn-primary btn-block" id="generate-pair"><i data-lucide="link"></i> Buat kode pairing</button><button class="btn btn-danger-soft btn-block hidden" id="unlink-telegram">Putuskan hubungan Telegram</button></article></div><article class="panel telegram-commands"><div class="panel-heading"><div><h3>Perintah bot</h3><p>Gunakan perintah berikut setelah akun terhubung.</p></div></div><div class="command-grid"><div><code>/menu</code><span>Menu utama</span></div><div><code>/masuk 500000 Gaji</code><span>Catat pemasukan</span></div><div><code>/keluar 25000 Makanan Beli sarapan</code><span>Catat pengeluaran</span></div><div><code>/saldo</code><span>Lihat saldo</span></div><div><code>/riwayat</code><span>Transaksi terbaru</span></div><div><code>/laporan</code><span>Rekap bulan ini</span></div></div></article></section>
+
+        <section class="view" id="view-profile"><div class="page-heading"><div><span class="eyebrow">YOUR ACCOUNT</span><h1>Profil saya</h1><p>Kelola identitas dan preferensi akun ARUSKAS.</p></div></div><div id="profile-form-mount"></div></section>
+        <section class="view" id="view-settings"><div class="page-heading"><div><span class="eyebrow">PREFERENCES</span><h1>Pengaturan</h1><p>Atur tampilan dan preferensi penggunaan aplikasi.</p></div></div><div id="settings-mount"></div></section>
+      </main>
+      <footer class="app-footer"><span>© 2026 ARUSKAS</span><span>Financial clarity, every day.</span><span class="api-indicator"><i></i> Cloud sync</span></footer>
+    </div>
+    <nav class="mobile-bottom-nav"><button class="active" data-view="dashboard"><i data-lucide="layout-dashboard"></i><span>Home</span></button><button data-view="income"><i data-lucide="plus-circle"></i><span>Masuk</span></button><button data-view="expense"><i data-lucide="minus-circle"></i><span>Keluar</span></button><button data-view="history"><i data-lucide="receipt"></i><span>Riwayat</span></button><button data-view="reports"><i data-lucide="chart-line"></i><span>Laporan</span></button></nav>
+  </div>
+
+  <div class="modal-backdrop hidden" id="modal-backdrop"><div class="modal-card" id="modal-card" role="dialog" aria-modal="true"><div class="modal-heading"><div><span class="eyebrow" id="modal-eyebrow">ARUSKAS</span><h3 id="modal-title">Detail</h3></div><button class="icon-button" id="modal-close" aria-label="Tutup"><i data-lucide="x"></i></button></div><div id="modal-content"></div></div></div>
+  <div class="modal-backdrop hidden" id="recovery-backdrop"><div class="modal-card recovery-modal" role="dialog" aria-modal="true"><div class="recovery-icon"><i data-lucide="shield-check"></i></div><span class="eyebrow">SIMPAN SEKARANG</span><h2>Kode pemulihan akun</h2><p>Kode ini hanya ditampilkan sekali. Simpan di tempat aman. Setiap kode hanya dapat digunakan satu kali untuk mengatur ulang password.</p><div id="recovery-codes" class="recovery-codes"></div><button class="btn btn-primary btn-block" id="copy-recovery">Salin semua kode</button><button class="btn btn-soft btn-block" id="recovery-done">Saya sudah menyimpannya</button></div></div>
+</body>
+</html>
